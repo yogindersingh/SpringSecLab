@@ -1,0 +1,6 @@
+spring:
+  application:
+   name: spring-security-learning
+
+server:
+  port: 9001
