@@ -1,6 +1,10 @@
 spring:
   application:
    name: spring-security-learning
+  security:
+    user:
+      name: "Yoginder"
+      password: "test"
 
 server:
   port: 9001
@@ -8,3 +12,7 @@ server:
 logging:
   pattern:
     console: "${LOGPATTERN_CONSOLE:%green(%d{dd/MM/yyyy HH:mm:ss.SSS}) %blue(%-5level) %cyan(@project.artifactId@:@project.version@ %X{traceId} %X{spanId}) %red([%thread]) %yellow(%logger{15}) - %msg%n}"
+  level:
+    org:
+      springframework:
+        security: TRACE
