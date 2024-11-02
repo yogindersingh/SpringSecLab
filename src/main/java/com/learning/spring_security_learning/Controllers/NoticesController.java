@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-public class HomeController {
+public class NoticesController {
 
-  @GetMapping(path = "/home")
+  @GetMapping(path = "/notices")
   public String home(){
-    return "Hello World";
+    return "notices saved successfully";
   }
 
 }
