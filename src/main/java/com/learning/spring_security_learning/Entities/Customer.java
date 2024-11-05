@@ -1,9 +1,12 @@
 package com.learning.spring_security_learning.Entities;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -21,21 +24,23 @@ public class Customer {
 
   @Id
   @UuidGenerator
+  @Column(name = "id")
   private UUID id;
 
-  @Column(name = "FirstName")
+  @Column(name = "firstName")
   private String firstName;
 
-  @Column(name = "LastName")
+  @Column(name = "lastName")
   private String lastName;
 
-  @Column(name = "Email")
+  @Column(name = "email")
   private String email;
 
-  @Column
+  @Column(name = "password")
   private String password;
 
-  @OneToMany(mappedBy = "customerId")
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "customerId", nullable = false)
   private List<CustomerRoles> roles;
 
 }

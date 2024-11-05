@@ -32,11 +32,11 @@ public class UserController {
     }
     customer.setPassword(passwordEncoder.encode(customer.getPassword()));
     Customer resp = customerRepo.save(customer);
-    resp.getRoles().forEach(val -> {
-      val.setCustomer(resp);
-      val.setCustomerId(resp.getId());
-    });
-    customerRolesRepo.saveAll(resp.getRoles());
+//    resp.getRoles().forEach(val -> {
+//      val.setCustomer(resp);
+//      val.setCustomerId(resp.getId());
+//    });
+//    customerRolesRepo.saveAll(resp.getRoles());
     return new ResponseEntity<>("User created", HttpStatus.CREATED);
   }
 
