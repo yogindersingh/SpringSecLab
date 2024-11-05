@@ -20,9 +20,6 @@ public class UserController {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  private CustomerRolesRepo customerRolesRepo;
-
   @PostMapping("/user")
   public ResponseEntity<String> createUser(
       @RequestBody
@@ -31,12 +28,7 @@ public class UserController {
       return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
     }
     customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-    Customer resp = customerRepo.save(customer);
-//    resp.getRoles().forEach(val -> {
-//      val.setCustomer(resp);
-//      val.setCustomerId(resp.getId());
-//    });
-//    customerRolesRepo.saveAll(resp.getRoles());
+    customerRepo.save(customer);
     return new ResponseEntity<>("User created", HttpStatus.CREATED);
   }
 
