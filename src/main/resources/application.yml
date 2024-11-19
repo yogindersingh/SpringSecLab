@@ -14,8 +14,27 @@ spring:
     username: ${DATABASE_USERNAME:root}
     password: ${DATABASE_PASSWORD:root@1234}
 
+#Configuration to enable https for spring-boot application
 server:
   port: 9001
+#  ssl:
+#    key-store-type: PKCS12
+#    key-store: classpath:certificates/serverkeystore
+#    key-store-password: password@1234
+#    key-alias: youralias
+#    enabled: true
+
+#Enforce certificate for both client and server
+#  ssl:
+#    key-store-type: PKCS12
+#    key-store: classpath:certificates/serverkeystore
+#    key-store-password: password@1234
+#    key-alias: youralias
+#    enabled: true
+#    trust-store-type: PKCS12
+#    trust-store: classpath:certificates/servertruststore.p12
+#    trust-store-password: truststore@1234
+#    client-auth: need
 
 logging:
   pattern:

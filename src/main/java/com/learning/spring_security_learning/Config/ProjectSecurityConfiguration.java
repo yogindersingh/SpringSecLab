@@ -17,7 +17,10 @@ public class ProjectSecurityConfiguration {
 
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable)
+    http
+    //required Channel configuration to support only https traffic
+//    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+        .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests((requests) -> {
           requests.requestMatchers("/myAccount", "myBalance", "myCards",
                   "myLoans").authenticated().

@@ -4,3 +4,12 @@ SpringSecLab is a hands-on playground for exploring and experimenting with Sprin
 
 # Spring Security Internal Flow
 ![](src/main/resources/spring-security.png)
+
+
+# Commands to generate keystore and certificate
+
+keytool -genkeypair -keypass password@1234 -storepass password@1234 -keystore serverkeystore -alias youralias -keyalg RSA -validity 365
+
+keytool -export -alias youralias -keystore serverkeystore -storepass password@1234 -rfc -file mycert.crt
+
+keytool -import -trustcacerts -keystore servertruststore.p12 -storetype PKCS12 -storepass truststore@1234 -alias client-cert -file certificate.pem
