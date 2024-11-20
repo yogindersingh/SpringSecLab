@@ -1,6 +1,8 @@
 package com.learning.spring_security_learning.Config;
 
 
+import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
@@ -14,6 +16,9 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 
 @Configuration
 public class ProjectSecurityConfiguration {
+
+  @Autowired
+  CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -31,7 +36,8 @@ public class ProjectSecurityConfiguration {
 //    http.formLogin(AbstractHttpConfigurer::disable);
 //    http.httpBasic(AbstractHttpConfigurer::disable);
     http.formLogin(Customizer.withDefaults());
-    http.httpBasic(Customizer.withDefaults());
+    //http.httpBasic(Customizer.withDefaults());
+    http.httpBasic(httpSecurityHttpBasicConfigurer->httpSecurityHttpBasicConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint));
     return http.build();
   }
 
