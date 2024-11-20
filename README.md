@@ -5,6 +5,8 @@ SpringSecLab is a hands-on playground for exploring and experimenting with Sprin
 # Spring Security Internal Flow
 ![](src/main/resources/spring-security.png)
 
+# Exception Handling Spring Security
+![](src/main/resources/ExceptionHandlinSpringSecurity.png)
 
 # Commands to generate keystore and certificate
 
