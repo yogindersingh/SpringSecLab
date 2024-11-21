@@ -17,6 +17,9 @@ spring:
 #Configuration to enable https for spring-boot application
 server:
   port: 9001
+  servlet:
+    session:
+      timeout: 2m
 #  ssl:
 #    key-store-type: PKCS12
 #    key-store: classpath:certificates/serverkeystore
