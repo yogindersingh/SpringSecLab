@@ -1,6 +1,7 @@
 package com.learning.spring_security_learning.Config;
 
 
+import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDeniedException;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,16 +21,21 @@ public class ProjectSecurityConfiguration {
   @Autowired
   CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
+  @Autowired
+  CustomAccessDeniedException customAccessDeniedException;
+
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-    http
-    //required Channel configuration to support only https traffic
+    http.sessionManagement(
+            httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.invalidSessionUrl(
+                "/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true))
+        //required Channel configuration to support only https traffic
 //    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests((requests) -> {
           requests.requestMatchers("/myAccount", "myBalance", "myCards",
                   "myLoans").authenticated().
-              requestMatchers("/contact", "/notices", "/error", "/user").permitAll().
+              requestMatchers("/contact", "/notices", "/error", "/user", "/invalidSession").permitAll().
               requestMatchers("*/*").denyAll();
         });
     //If we want to disable UI form login or Basic credentials login
@@ -37,7 +43,14 @@ public class ProjectSecurityConfiguration {
 //    http.httpBasic(AbstractHttpConfigurer::disable);
     http.formLogin(Customizer.withDefaults());
     //http.httpBasic(Customizer.withDefaults());
-    http.httpBasic(httpSecurityHttpBasicConfigurer->httpSecurityHttpBasicConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint));
+    http.httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.authenticationEntryPoint(
+        customAuthenticationEntryPoint));
+    http.exceptionHandling(
+        httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(
+            customAccessDeniedException));
+
+    //Global attach the authenticationEntryPoint
+//    http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint));
     return http.build();
   }
 
