@@ -27,9 +27,10 @@ public class ProjectSecurityConfiguration {
 
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    //Default strategy By spring security is changed session itself for session fixation attacks
     http.sessionManagement(
             httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionFixation(
-                SessionManagementConfigurer.SessionFixationConfigurer::newSession).invalidSessionUrl(
+                SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId).invalidSessionUrl(
                 "/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true))
         //required Channel configuration to support only https traffic
 //    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
