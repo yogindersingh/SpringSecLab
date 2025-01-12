@@ -10,6 +10,7 @@ import org.springframework.security.authentication.password.CompromisedPasswordC
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,7 +28,8 @@ public class ProjectSecurityConfiguration {
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
     http.sessionManagement(
-            httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.invalidSessionUrl(
+            httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionFixation(
+                SessionManagementConfigurer.SessionFixationConfigurer::newSession).invalidSessionUrl(
                 "/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true))
         //required Channel configuration to support only https traffic
 //    .requiresChannel(channel -> channel.anyRequest().requiresSecure())

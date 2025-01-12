@@ -17,6 +17,7 @@ spring:
 #Configuration to enable https for spring-boot application
 server:
   port: 9001
+  #Timeout can be minimum 2min or 120sec
   servlet:
     session:
       timeout: 2m
