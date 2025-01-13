@@ -53,6 +53,9 @@ public class ProjectSecurityConfiguration {
 //    http.httpBasic(AbstractHttpConfigurer::disable);
     http.formLogin(httpFormLoginConfigurer -> httpFormLoginConfigurer.successHandler(authenticationSuccessCustomHandler)
         .failureHandler(authenticationFailureCustomHandler));
+        //logout Configuration for HTML form login
+       // .logout(httpLogoutConfigurer -> httpLogoutConfigurer.logoutSuccessUrl("/logout?logout=true")
+    // .invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID));
     //http.httpBasic(Customizer.withDefaults());
     http.httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.authenticationEntryPoint(
         customAuthenticationEntryPoint));
