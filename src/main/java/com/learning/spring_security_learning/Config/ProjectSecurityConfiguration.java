@@ -3,11 +3,12 @@ package com.learning.spring_security_learning.Config;
 
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDeniedException;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
+import com.learning.spring_security_learning.Handlers.AuthenticationFailureCustomHandler;
+import com.learning.spring_security_learning.Handlers.AuthenticationSuccessCustomHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
@@ -24,6 +25,12 @@ public class ProjectSecurityConfiguration {
 
   @Autowired
   CustomAccessDeniedException customAccessDeniedException;
+
+  @Autowired
+  AuthenticationSuccessCustomHandler authenticationSuccessCustomHandler;
+
+  @Autowired
+  AuthenticationFailureCustomHandler authenticationFailureCustomHandler;
 
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -44,7 +51,8 @@ public class ProjectSecurityConfiguration {
     //If we want to disable UI form login or Basic credentials login
 //    http.formLogin(AbstractHttpConfigurer::disable);
 //    http.httpBasic(AbstractHttpConfigurer::disable);
-    http.formLogin(Customizer.withDefaults());
+    http.formLogin(httpFormLoginConfigurer -> httpFormLoginConfigurer.successHandler(authenticationSuccessCustomHandler)
+        .failureHandler(authenticationFailureCustomHandler));
     //http.httpBasic(Customizer.withDefaults());
     http.httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.authenticationEntryPoint(
         customAuthenticationEntryPoint));
