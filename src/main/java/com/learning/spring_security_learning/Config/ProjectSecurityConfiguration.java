@@ -5,6 +5,7 @@ import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDenie
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
 import com.learning.spring_security_learning.Handlers.AuthenticationFailureCustomHandler;
 import com.learning.spring_security_learning.Handlers.AuthenticationSuccessCustomHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,11 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class ProjectSecurityConfiguration {
@@ -62,6 +68,21 @@ public class ProjectSecurityConfiguration {
     http.exceptionHandling(
         httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(
             customAccessDeniedException));
+
+    //CORS configure to allow from specific origin
+    http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(
+        request -> {
+          CorsConfiguration config = new CorsConfiguration();
+          config.setAllowCredentials(true);
+          config.setAllowedOrigins(List.of("http://localhost:4200"));
+          //Allowed headers method and origin to accept
+          config.setAllowedHeaders(Collections.singletonList(""));
+          config.setAllowedMethods(Collections.singletonList("*"));
+          //max age for which the browser will remember these configurations
+          // Browser will receive allow origin header in response during the preflight call to call the actual API.
+          config.setMaxAge(3600L);
+          return config;
+        }));
 
     //Global attach the authenticationEntryPoint
 //    http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint));
