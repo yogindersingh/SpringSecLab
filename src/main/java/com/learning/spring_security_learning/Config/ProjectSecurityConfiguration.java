@@ -1,24 +1,27 @@
 package com.learning.spring_security_learning.Config;
 
 
+import com.learning.spring_security_learning.CustomCsrfFilter;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDeniedException;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
 import com.learning.spring_security_learning.Handlers.AuthenticationFailureCustomHandler;
 import com.learning.spring_security_learning.Handlers.AuthenticationSuccessCustomHandler;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,14 +43,20 @@ public class ProjectSecurityConfiguration {
 
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
     //Default strategy By spring security is changed session itself for session fixation attacks
     http.sessionManagement(
-            httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionFixation(
+            httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
+                SessionCreationPolicy.ALWAYS).sessionFixation(
                 SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId).invalidSessionUrl(
                 "/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true))
+        .securityContext(securityContextConfigurer -> securityContextConfigurer.requireExplicitSave(false))
         //required Channel configuration to support only https traffic
 //    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
-        .csrf(AbstractHttpConfigurer::disable)
+//        .csrf(AbstractHttpConfigurer::disable)
+        .csrf(csrf->{
+          csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).csrfTokenRequestHandler(csrfTokenRequestAttributeHandler);
+        }).addFilterAfter(new CustomCsrfFilter(), BasicAuthenticationFilter.class)
         .authorizeHttpRequests((requests) -> {
           requests.requestMatchers("/myAccount", "myBalance", "myCards",
                   "myLoans").authenticated().
