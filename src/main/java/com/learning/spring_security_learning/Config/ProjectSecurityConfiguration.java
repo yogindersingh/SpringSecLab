@@ -58,9 +58,9 @@ public class ProjectSecurityConfiguration {
           csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).csrfTokenRequestHandler(csrfTokenRequestAttributeHandler);
         }).addFilterAfter(new CustomCsrfFilter(), BasicAuthenticationFilter.class)
         .authorizeHttpRequests((requests) -> {
-          requests.requestMatchers("/myAccount", "myBalance", "myCards",
-                  "myLoans").authenticated().
-              requestMatchers("/contact", "/notices", "/error", "/user", "/invalidSession").permitAll().
+          requests.requestMatchers("/myAccount", "myBalance", "myCards").authenticated()
+              .requestMatchers("myLoans").hasAuthority("admin")
+              .requestMatchers("/contact", "/notices", "/error", "/user", "/invalidSession").permitAll().
               requestMatchers("*/*").denyAll();
         });
     //If we want to disable UI form login or Basic credentials login
