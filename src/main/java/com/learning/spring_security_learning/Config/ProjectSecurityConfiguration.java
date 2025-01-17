@@ -59,7 +59,8 @@ public class ProjectSecurityConfiguration {
         }).addFilterAfter(new CustomCsrfFilter(), BasicAuthenticationFilter.class)
         .authorizeHttpRequests((requests) -> {
           requests.requestMatchers("/myAccount", "myBalance", "myCards").authenticated()
-              .requestMatchers("myLoans").hasAuthority("admin")
+//              .requestMatchers("myLoans").hasAuthority("VIEW_LOANS")
+              .requestMatchers("myLoans").hasRole("ADMIN")
               .requestMatchers("/contact", "/notices", "/error", "/user", "/invalidSession").permitAll().
               requestMatchers("*/*").denyAll();
         });
