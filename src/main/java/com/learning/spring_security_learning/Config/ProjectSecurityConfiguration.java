@@ -1,7 +1,7 @@
 package com.learning.spring_security_learning.Config;
 
 
-import com.learning.spring_security_learning.CustomCsrfFilter;
+import com.learning.spring_security_learning.filters.CustomCsrfFilter;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDeniedException;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
 import com.learning.spring_security_learning.Handlers.AuthenticationFailureCustomHandler;
@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Collections;
