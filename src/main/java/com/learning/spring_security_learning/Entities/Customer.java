@@ -1,6 +1,8 @@
 package com.learning.spring_security_learning.Entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,9 +38,11 @@ public class Customer {
   @Column(name = "email")
   private String email;
 
+  @JsonIgnore
   @Column(name = "password")
   private String password;
 
+  @JsonIgnore
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "customerId", nullable = false)
   private List<CustomerRoles> roles;

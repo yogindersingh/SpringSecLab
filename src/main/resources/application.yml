@@ -46,4 +46,4 @@ logging:
   level:
     org:
       springframework:
-        security: ERROR
+        security: DEBUG

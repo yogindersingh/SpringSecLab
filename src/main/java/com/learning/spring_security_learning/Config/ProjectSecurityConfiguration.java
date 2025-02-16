@@ -45,17 +45,23 @@ public class ProjectSecurityConfiguration {
     CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
     //Default strategy By spring security is changed session itself for session fixation attacks
     http.sessionManagement(
-            httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
-                SessionCreationPolicy.ALWAYS).sessionFixation(
-                SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId).invalidSessionUrl(
-                "/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true))
+            httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+
+                //Optional to change because default is changeSessionId only
+                .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId)
+
+                .invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true))
         .securityContext(securityContextConfigurer -> securityContextConfigurer.requireExplicitSave(false))
+
         //required Channel configuration to support only https traffic
 //    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
 //        .csrf(AbstractHttpConfigurer::disable)
+
         .csrf(csrf->{
           csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).csrfTokenRequestHandler(csrfTokenRequestAttributeHandler);
         }).addFilterAfter(new CustomCsrfFilter(), BasicAuthenticationFilter.class)
+
         .authorizeHttpRequests((requests) -> {
           requests.requestMatchers("/myAccount", "myBalance", "myCards").authenticated()
 //              .requestMatchers("myLoans").hasAuthority("VIEW_LOANS")
@@ -63,15 +69,19 @@ public class ProjectSecurityConfiguration {
               .requestMatchers("/contact", "/notices", "/error", "/user", "/invalidSession").permitAll().
               requestMatchers("*/*").denyAll();
         });
+
     //If we want to disable UI form login or Basic credentials login
 //    http.formLogin(AbstractHttpConfigurer::disable);
 //    http.httpBasic(AbstractHttpConfigurer::disable);
+
     http.formLogin(httpFormLoginConfigurer -> httpFormLoginConfigurer.successHandler(authenticationSuccessCustomHandler)
         .failureHandler(authenticationFailureCustomHandler));
+
         //logout Configuration for HTML form login
        // .logout(httpLogoutConfigurer -> httpLogoutConfigurer.logoutSuccessUrl("/logout?logout=true")
     // .invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID));
     //http.httpBasic(Customizer.withDefaults());
+
     http.httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.authenticationEntryPoint(
         customAuthenticationEntryPoint));
     http.exceptionHandling(
