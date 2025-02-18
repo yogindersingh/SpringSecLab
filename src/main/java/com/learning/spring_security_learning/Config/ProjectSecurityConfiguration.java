@@ -1,17 +1,19 @@
 package com.learning.spring_security_learning.Config;
 
 
-import com.learning.spring_security_learning.filters.CustomCsrfFilter;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDeniedException;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
 import com.learning.spring_security_learning.Handlers.AuthenticationFailureCustomHandler;
 import com.learning.spring_security_learning.Handlers.AuthenticationSuccessCustomHandler;
+import com.learning.spring_security_learning.constants.ApplicationConstants;
+import com.learning.spring_security_learning.filters.CustomCsrfFilter;
+import com.learning.spring_security_learning.filters.JWTTokenGeneratorFilter;
+import com.learning.spring_security_learning.filters.JWTTokenValidatorFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,27 +48,30 @@ public class ProjectSecurityConfiguration {
     //Default strategy By spring security is changed session itself for session fixation attacks
     http.sessionManagement(
             httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 //Optional to change because default is changeSessionId only
-                .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId)
+                //.sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId)
 
-                .invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true))
-        .securityContext(securityContextConfigurer -> securityContextConfigurer.requireExplicitSave(false))
+                .invalidSessionUrl("/invalidSession")
+            //removed maximum session configuration
+            //.maximumSessions(1).maxSessionsPreventsLogin(true)
+        )
+        //don't require this configuration in case of JWT Validation
+        //.securityContext(securityContextConfigurer -> securityContextConfigurer.requireExplicitSave(false))
 
         //required Channel configuration to support only https traffic
 //    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
 //        .csrf(AbstractHttpConfigurer::disable)
 
-        .csrf(csrf->{
-          csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).csrfTokenRequestHandler(csrfTokenRequestAttributeHandler);
-        }).addFilterAfter(new CustomCsrfFilter(), BasicAuthenticationFilter.class)
+        .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)).addFilterAfter(new CustomCsrfFilter(), BasicAuthenticationFilter.class)
 
         .authorizeHttpRequests((requests) -> {
-          requests.requestMatchers("/myAccount", "myBalance", "myCards").authenticated()
+          requests.requestMatchers("/myAccount", "/myBalance", "/myCards", "/user", "/register").authenticated()
 //              .requestMatchers("myLoans").hasAuthority("VIEW_LOANS")
-              .requestMatchers("myLoans").hasRole("ADMIN")
-              .requestMatchers("/contact", "/notices", "/error", "/user", "/invalidSession").permitAll().
+              .requestMatchers("/myLoans").hasRole("ADMIN")
+              .requestMatchers("/contact", "/notices", "/error", "/invalidSession").permitAll().
               requestMatchers("*/*").denyAll();
         });
 
@@ -77,8 +82,8 @@ public class ProjectSecurityConfiguration {
     http.formLogin(httpFormLoginConfigurer -> httpFormLoginConfigurer.successHandler(authenticationSuccessCustomHandler)
         .failureHandler(authenticationFailureCustomHandler));
 
-        //logout Configuration for HTML form login
-       // .logout(httpLogoutConfigurer -> httpLogoutConfigurer.logoutSuccessUrl("/logout?logout=true")
+    //logout Configuration for HTML form login
+    // .logout(httpLogoutConfigurer -> httpLogoutConfigurer.logoutSuccessUrl("/logout?logout=true")
     // .invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID));
     //http.httpBasic(Customizer.withDefaults());
 
@@ -100,8 +105,12 @@ public class ProjectSecurityConfiguration {
           //max age for which the browser will remember these configurations
           // Browser will receive allow origin header in response during the preflight call to call the actual API.
           config.setMaxAge(3600L);
+          config.setExposedHeaders(List.of(ApplicationConstants.JWT_HEADER));
           return config;
         }));
+
+    http.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class);
+    http.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class);
 
     //Global attach the authenticationEntryPoint
 //    http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint));

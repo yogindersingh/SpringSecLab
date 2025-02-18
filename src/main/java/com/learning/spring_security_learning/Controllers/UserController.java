@@ -41,7 +41,7 @@ public class UserController {
 
 
   @GetMapping("/user")
-  public ResponseEntity getUser() {
+  public ResponseEntity<?> getUser() {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
     Optional<Customer> customer = customerRepo.findByEmail(userEmail);
     if (customer.isEmpty()) {
