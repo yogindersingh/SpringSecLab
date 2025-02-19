@@ -1,5 +1,6 @@
 package com.learning.spring_security_learning.Config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("!local")
+@AllArgsConstructor
 public class CustomerProvider implements AuthenticationProvider {
 
   @Autowired

@@ -12,9 +12,12 @@ import com.learning.spring_security_learning.filters.JWTTokenValidatorFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -65,13 +68,14 @@ public class ProjectSecurityConfiguration {
 //        .csrf(AbstractHttpConfigurer::disable)
 
         .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)).addFilterAfter(new CustomCsrfFilter(), BasicAuthenticationFilter.class)
+            .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler).ignoringRequestMatchers("/apiLogin")).addFilterAfter(new CustomCsrfFilter(),
+            BasicAuthenticationFilter.class)
 
         .authorizeHttpRequests((requests) -> {
           requests.requestMatchers("/myAccount", "/myBalance", "/myCards", "/user", "/register").authenticated()
 //              .requestMatchers("myLoans").hasAuthority("VIEW_LOANS")
               .requestMatchers("/myLoans").hasRole("ADMIN")
-              .requestMatchers("/contact", "/notices", "/error", "/invalidSession").permitAll().
+              .requestMatchers("/contact", "/notices", "/error", "/invalidSession","/apiLogin").permitAll().
               requestMatchers("*/*").denyAll();
         });
 
@@ -147,4 +151,12 @@ public class ProjectSecurityConfiguration {
   }
 
 
+  @Bean
+  public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
+                                                     PasswordEncoder passwordEncoder) {
+    CustomerProvider customerProvider=new CustomerProvider(userDetailsService,passwordEncoder);
+    ProviderManager providerManager = new ProviderManager(customerProvider);
+    providerManager.setEraseCredentialsAfterAuthentication(false);
+    return  providerManager;
+  }
 }
