@@ -72,7 +72,7 @@ public class ProjectSecurityConfiguration {
             BasicAuthenticationFilter.class)
 
         .authorizeHttpRequests((requests) -> {
-          requests.requestMatchers("/myAccount", "/myBalance", "/myCards", "/user", "/register").authenticated()
+          requests.requestMatchers("/myAccount", "/myBalance", "/myCards", "/user").authenticated()
 //              .requestMatchers("myLoans").hasAuthority("VIEW_LOANS")
               .requestMatchers("/myLoans").hasRole("ADMIN")
               .requestMatchers("/contact", "/notices", "/error", "/invalidSession","/apiLogin").permitAll().
