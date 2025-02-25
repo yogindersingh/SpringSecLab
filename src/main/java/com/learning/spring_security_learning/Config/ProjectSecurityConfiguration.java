@@ -1,9 +1,9 @@
 package com.learning.spring_security_learning.Config;
 
 
+import com.learning.spring_security_learning.Converters.KeycloakRoleConverter;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDeniedException;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
-import com.learning.spring_security_learning.JwtCustomConverter.KeycloakRoleConverter;
 import com.learning.spring_security_learning.filters.CustomCsrfFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -39,7 +38,8 @@ public class ProjectSecurityConfiguration {
                 .invalidSessionUrl("/invalidSession"))
 
         .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler).ignoringRequestMatchers("/apiLogin")).addFilterAfter(new CustomCsrfFilter(),
+            .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler).ignoringRequestMatchers("/apiLogin"))
+        .addFilterAfter(new CustomCsrfFilter(),
             BasicAuthenticationFilter.class)
 
         .authorizeHttpRequests((requests) -> {
@@ -50,7 +50,10 @@ public class ProjectSecurityConfiguration {
               requestMatchers("*/*").denyAll();
         });
 
-    http.oauth2ResourceServer(rsc->rsc.jwt(jc->jc.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+    http.oauth2ResourceServer(rsc -> rsc.jwt(jc -> jc.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+    //Opaque token configuration
+    // http.oauth2ResourceServer(rsc->rsc.opaqueToken(otc->otc.authenticationConverter(new KeycloakOpaqueRoleConverter
+    // ())));
     return http.build();
   }
 

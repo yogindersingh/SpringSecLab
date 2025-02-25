@@ -17,7 +17,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8081/realms/SpringSecLabRealm/protocol/openid-connect/certs
+          jwk-set-uri: http://localhost:8081/realms/SpringSecLabRealm/protocol/openid-connect/certs.
+
+#Opaque token configuration
+
+#  security:
+#    oauth2:
+#      resourceserver:
+#        opaquetoken:
+#          introspection-uri: ${INTROSPECT_URI:http://localhost:8081/realms/SpringSecLabRealm/protocol/openid-connect/token/introspect}
+#          client-id: ${INTROSPECT_ID:SpringSecLabIntrospect}
+#          client-secret: ${INTROSPECT_SECRET:UDdkRPncr3JWWPWpwTKt6eHui2TqUpkX}
 
 #Configuration to enable https for spring-boot application
 server:

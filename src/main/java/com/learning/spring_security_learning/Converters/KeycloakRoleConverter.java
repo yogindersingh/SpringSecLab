@@ -1,4 +1,4 @@
-package com.learning.spring_security_learning.JwtCustomConverter;
+package com.learning.spring_security_learning.Converters;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
