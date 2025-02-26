@@ -25,9 +25,9 @@ spring:
 #    oauth2:
 #      resourceserver:
 #        opaquetoken:
-#          introspection-uri: ${INTROSPECT_URI:http://localhost:8081/realms/SpringSecLabRealm/protocol/openid-connect/token/introspect}
+#          introspection-uri: ${INTROSPECT_URI:http://localhost:8101/oauth2/introspect}
 #          client-id: ${INTROSPECT_ID:SpringSecLabIntrospect}
-#          client-secret: ${INTROSPECT_SECRET:UDdkRPncr3JWWPWpwTKt6eHui2TqUpkX}
+#          client-secret: ${INTROSPECT_SECRET:c1BK9Bg2REeydBbvUoUeKCbD2bvJzXGj}
 
 #Configuration to enable https for spring-boot application
 server:

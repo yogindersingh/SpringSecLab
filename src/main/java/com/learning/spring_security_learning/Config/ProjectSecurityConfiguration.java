@@ -1,6 +1,7 @@
 package com.learning.spring_security_learning.Config;
 
 
+import com.learning.spring_security_learning.Converters.KeycloakOpaqueRoleConverter;
 import com.learning.spring_security_learning.Converters.KeycloakRoleConverter;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAccessDeniedException;
 import com.learning.spring_security_learning.ExceptionHandlers.CustomAuthenticationEntryPoint;
@@ -51,9 +52,9 @@ public class ProjectSecurityConfiguration {
         });
 
     http.oauth2ResourceServer(rsc -> rsc.jwt(jc -> jc.jwtAuthenticationConverter(jwtAuthenticationConverter)));
-    //Opaque token configuration
-    // http.oauth2ResourceServer(rsc->rsc.opaqueToken(otc->otc.authenticationConverter(new KeycloakOpaqueRoleConverter
-    // ())));
+//    Opaque token configuration
+//     http.oauth2ResourceServer(rsc->rsc.opaqueToken(otc->otc.authenticationConverter(new KeycloakOpaqueRoleConverter
+//     ())));
     return http.build();
   }
 
