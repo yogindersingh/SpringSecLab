@@ -8,7 +8,7 @@ public class BankService {
 
 
   //Enable method level security
-  @PreAuthorize("hasRole('READ')")
+  @PreAuthorize("hasRole('WRITE')")
   public String getResponseString() {
     return "get the balance";
   }
